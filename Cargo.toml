@@ -1,0 +1,8 @@
+[package]
+name = "directemar_crawler"
+version = "0.1.0"
+authors = ["Rodolfo Castillo Mateluna <rodolfocastillomateluna@gmail.com>"]
+
+[dependencies]
+reqwest = "0.8.8"
+select = "0.4.2"
