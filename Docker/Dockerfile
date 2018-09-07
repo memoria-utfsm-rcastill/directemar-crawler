@@ -6,4 +6,4 @@ COPY ./directemar_crawler /directemar_crawler
 #RUN apk update && apk add --no-cache ca-certificates && update-ca-certificates
 #ENV SSL_CERT_DIR=/etc/ssl/certs
 
-CMD [ "/directemar_crawler" ]
+ENTRYPOINT [ "/directemar_crawler" ]
