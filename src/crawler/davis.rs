@@ -25,8 +25,8 @@ impl DavisDataDownloader {
         ))?
             .text()?;
         Ok(DavisData::from_document(
-            self.id,
-            DavisDataDocument(Document::from(html.as_ref())),
+            self.id.clone(),
+            DavisDataDocument(self.id, Document::from(html.as_ref())),
         ))
     }
 }
@@ -103,11 +103,11 @@ impl<'a> From<&'a DavisData> for BsonDocument {
     }
 }
 
-struct DavisDataDocument(Document);
+struct DavisDataDocument(String, Document);
 
 impl DavisDataDocument {
     fn table_element(&self, name: &str, replace: &str) -> String {
-        let gpar = self.0 // doc
+        let gpar = self.1 // doc
             // Get node with html() temperature
             .find(|node: &Node| node.text() == name)
             .next()
@@ -137,55 +137,67 @@ impl DavisDataDocument {
     fn temp(&self) -> f64 {
         self.table_element("Temperature", "\u{a0}°C")
             .parse()
-            .expect("Could not parse temp")
+            .expect(&format!("[{}] Could not parse temp", &self.0))
     }
 
     fn windchill(&self) -> f64 {
         self.table_element("Windchill", "\u{a0}°C")
             .parse()
-            .expect("Could not parse windchill")
+            .expect(&format!("[{}] Could not parse windchill", &self.0))
     }
 
     fn heat_index(&self) -> f64 {
         self.table_element("Heat Index", "\u{a0}°C")
             .parse()
-            .expect("Could not parse heat_index")
+            .expect(&format!("[{}] Could not parse heat_index", &self.0))
     }
 
     fn humidity(&self) -> f64 {
         self.table_element("Humidity", "%").parse::<f64>().expect(
-            "Could not parse 'humidity'",
+            &format!(
+                "[{}] Could not parse 'humidity'",
+                &self.0
+            ),
         ) / 100.0
     }
 
     fn dew_point(&self) -> f64 {
         self.table_element("Dew\u{a0}Point ", "\u{a0}°C")
             .parse()
-            .expect("Could not parse 'dew_point'")
+            .expect(&format!("[{}] Could not parse 'dew_point'", &self.0))
     }
 
     fn rainfall_lasthour(&self) -> f64 {
         self.table_element("Rainfall\u{a0}Last Hour", "\u{a0}mm")
             .parse()
-            .expect("Could not parse 'rainfall_lasthour'")
+            .expect(&format!(
+                "[{}] Could not parse 'rainfall_lasthour'",
+                &self.0
+            ))
     }
 
     fn rainfall_thismonth(&self) -> f64 {
         self.table_element("Rainfall\u{a0}This\u{a0}Month", "\u{a0}mm")
             .parse()
-            .expect("Could not parse 'rainfall_thismonth'")
+            .expect(&format!(
+                "[{}] Could not parse 'rainfall_thismonth'",
+                &self.0
+            ))
     }
 
     fn rainfall_rate(&self) -> f64 {
         self.table_element("Rainfall\u{a0}Rate", "\u{a0}mm/hr")
             .parse()
-            .expect("Could not parse 'rainfall_rate'")
+            .expect(&format!("[{}] Could not parse 'rainfall_rate'", &self.0))
     }
 
     fn rainfall_thisyear(&self) -> f64 {
         self.table_element("Rainfall\u{a0}This\u{a0}Year", "\u{a0}mm")
             .parse()
-            .expect("Could not parse 'rainfall_thisyear'")
+            .expect(&format!(
+                "[{}] Could not parse 'rainfall_thisyear'",
+                &self.0
+            ))
     }
 
     fn rainfall_last(&self) -> DateTime<Utc> {
@@ -194,14 +206,14 @@ impl DavisDataDocument {
             self.table_element("Last rainfall", "\u{a0}mm").as_str()
         );
         DateTime::parse_from_str(&dt_with_tz, "%Y-%m-%d %H:%M %:z")
-            .expect("Could not parse 'rainfall_last'")
+            .expect(&format!("[{}] Could not parse 'rainfall_last'", &self.0))
             .with_timezone(&Utc)
     }
 
     fn rainfall_today(&self) -> f64 {
         self.table_element("Rainfall\u{a0}Today", "\u{a0}mm")
             .parse()
-            .expect("Could not parse 'rainfall_today'")
+            .expect(&format!("[{}] Could not parse 'rainfall_today'", &self.0))
     }
 
     fn has_wind_data(&self) -> bool {
@@ -210,26 +222,28 @@ impl DavisDataDocument {
 
     fn wind_direction(&self) -> f64 {
         let wind = self.table_element("Wind Bearing", "");
-        wind[..wind.find("°").expect("Could not find '°' index")]
-            .parse()
-            .expect("Could not parse 'wind_direction'")
+        wind[..wind.find("°").expect(&format!(
+            "[{}] Could not find '°' index",
+            &self.0
+        ))].parse()
+            .expect(&format!("[{}] Could not parse 'wind_direction'", &self.0))
     }
 
     fn wind_speed_gust(&self) -> f64 {
         self.table_element("Wind\u{a0}Speed\u{a0}(gust)", "\u{a0}kts")
             .parse()
-            .expect("Could not parse 'wind_speed_gust'")
+            .expect(&format!("[{}] Could not parse 'wind_speed_gust'", &self.0))
     }
 
     fn wind_speed_avg(&self) -> f64 {
         self.table_element("Wind\u{a0}Speed\u{a0}(avg)", "\u{a0}kts")
             .parse()
-            .expect("Could not parse 'wind_speed_avg'")
+            .expect(&format!("[{}] Could not parse 'wind_speed_avg'", &self.0))
     }
 
     fn barometer(&self) -> f64 {
         self.table_element("Barometer\u{a0}", "\u{a0}hPa")
             .parse()
-            .expect("Could not parse 'barometer'")
+            .expect(&format!("[{}] Could not parse 'barometer'", &self.0))
     }
 }
