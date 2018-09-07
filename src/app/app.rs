@@ -72,7 +72,7 @@ impl App {
                 let target_arg = target.clone();
                 thread::spawn(move || {
                     let logger = Logger::with_tag(&format!("Downloader:{}", &target_arg));
-                    logger.info(&format!("Downloading latest data for {}", &target_arg));
+                    logger.info(&format!("Downloading latest data"));
                     match DavisDataDownloader::with_id(&target_arg).download() {
                         Ok(davis_data) => {
                             if let Err(err) = tx.send(davis_data) {
