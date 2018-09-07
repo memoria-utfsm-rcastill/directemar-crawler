@@ -137,53 +137,55 @@ impl DavisDataDocument {
     fn temp(&self) -> f64 {
         self.table_element("Temperature", "\u{a0}°C")
             .parse()
-            .unwrap()
+            .expect("Could not parse temp")
     }
 
     fn windchill(&self) -> f64 {
         self.table_element("Windchill", "\u{a0}°C")
             .parse()
-            .unwrap()
+            .expect("Could not parse windchill")
     }
 
     fn heat_index(&self) -> f64 {
         self.table_element("Heat Index", "\u{a0}°C")
             .parse()
-            .unwrap()
+            .expect("Could not parse heat_index")
     }
 
     fn humidity(&self) -> f64 {
-        self.table_element("Humidity", "%").parse::<f64>().unwrap() / 100.0
+        self.table_element("Humidity", "%").parse::<f64>().expect(
+            "Could not parse 'humidity'",
+        ) / 100.0
     }
 
     fn dew_point(&self) -> f64 {
         self.table_element("Dew\u{a0}Point ", "\u{a0}°C")
             .parse()
-            .unwrap()
+            .expect("Could not parse 'dew_point'")
     }
 
     fn rainfall_lasthour(&self) -> f64 {
         self.table_element("Rainfall\u{a0}Last Hour", "\u{a0}mm")
             .parse()
-            .unwrap()
+            .expect("Could not parse 'rainfall_lasthour'")
     }
 
     fn rainfall_thismonth(&self) -> f64 {
         self.table_element("Rainfall\u{a0}This\u{a0}Month", "\u{a0}mm")
             .parse()
-            .unwrap()
+            .expect("Could not parse 'rainfall_thismonth'")
     }
 
     fn rainfall_rate(&self) -> f64 {
         self.table_element("Rainfall\u{a0}Rate", "\u{a0}mm/hr")
             .parse()
-            .unwrap()
+            .expect("Could not parse 'rainfall_rate'")
     }
 
     fn rainfall_thisyear(&self) -> f64 {
         self.table_element("Rainfall\u{a0}This\u{a0}Year", "\u{a0}mm")
             .parse()
-            .unwrap()
+            .expect("Could not parse 'rainfall_thisyear'")
     }
 
     fn rainfall_last(&self) -> DateTime<Utc> {
@@ -192,14 +194,14 @@ impl DavisDataDocument {
             self.table_element("Last rainfall", "\u{a0}mm").as_str()
         );
         DateTime::parse_from_str(&dt_with_tz, "%Y-%m-%d %H:%M %:z")
-            .unwrap()
+            .expect("Could not parse 'rainfall_last'")
             .with_timezone(&Utc)
     }
 
     fn rainfall_today(&self) -> f64 {
         self.table_element("Rainfall\u{a0}Today", "\u{a0}mm")
             .parse()
-            .unwrap()
+            .expect("Could not parse 'rainfall_today'")
     }
 
     fn has_wind_data(&self) -> bool {
@@ -208,24 +210,26 @@ impl DavisDataDocument {
 
     fn wind_direction(&self) -> f64 {
         let wind = self.table_element("Wind Bearing", "");
-        wind[..wind.find("°").unwrap()].parse().unwrap()
+        wind[..wind.find("°").expect("Could not find '°' index")]
+            .parse()
+            .expect("Could not parse 'wind_direction'")
     }
 
     fn wind_speed_gust(&self) -> f64 {
         self.table_element("Wind\u{a0}Speed\u{a0}(gust)", "\u{a0}kts")
             .parse()
-            .unwrap()
+            .expect("Could not parse 'wind_speed_gust'")
     }
 
     fn wind_speed_avg(&self) -> f64 {
         self.table_element("Wind\u{a0}Speed\u{a0}(avg)", "\u{a0}kts")
             .parse()
-            .unwrap()
+            .expect("Could not parse 'wind_speed_avg'")
     }
 
     fn barometer(&self) -> f64 {
         self.table_element("Barometer\u{a0}", "\u{a0}hPa")
             .parse()
-            .unwrap()
+            .expect("Could not parse 'barometer'")
     }
 }
