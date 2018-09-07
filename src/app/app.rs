@@ -34,6 +34,7 @@ impl App {
         let connstr = self.settings.connection_string.clone();
         let db = self.settings.database.clone();
         let coll = self.settings.collection.clone();
+        let requeuer = tx.clone();
         thread::spawn(move || {
             let logger = Logger::with_tag("MongoConnection");
             loop {
@@ -44,8 +45,12 @@ impl App {
                             match rx.recv() {
                                 Ok(davis_data) => {
                                     logger.info(&format!("Persisting data for {}", davis_data.id));
-                                    if let Err(err) = conn.insert(&db, &coll, davis_data) {
+                                    if let Err(err) = conn.insert(&db, &coll, &davis_data) {
                                         logger.error(&format!("{}", err));
+                                        logger.info("Queueing for later");
+                                        if let Err(err) = requeuer.send(davis_data) {
+                                            logger.error(&format!("{}", err));
+                                        }
                                         break;
                                     }
                                 }

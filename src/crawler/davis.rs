@@ -77,12 +77,12 @@ impl DavisData {
     }
 }
 
-impl From<DavisData> for BsonDocument {
-    fn from(davis: DavisData) -> BsonDocument {
+impl<'a> From<&'a DavisData> for BsonDocument {
+    fn from(davis: &DavisData) -> BsonDocument {
         doc! {
             "_id": ::bson::oid::ObjectId::new().unwrap(),
             "ts": davis.ts,
-            "station": davis.id,
+            "station": davis.id.clone(),
             "temp": davis.temp,
             "windchill": davis.windchill,
             "heat_index": davis.heat_index,
