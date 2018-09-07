@@ -80,7 +80,7 @@ impl DavisData {
 impl<'a> From<&'a DavisData> for BsonDocument {
     fn from(davis: &DavisData) -> BsonDocument {
         doc! {
-            "_id": ::bson::oid::ObjectId::new().unwrap(),
+            "_id": ::bson::oid::ObjectId::new().expect("Could not generate ObjectId"),
             "ts": davis.ts,
             "station": davis.id.clone(),
             "temp": davis.temp,
@@ -108,13 +108,13 @@ struct DavisDataDocument(String, Document);
 impl DavisDataDocument {
     fn table_element(&self, name: &str, replace: &str) -> String {
         let gpar = self.1 // doc
-            // Get node with html() temperature
+            // Get node with html() == name
             .find(|node: &Node| node.text() == name)
             .next()
-            .unwrap()
+            .expect(&format!("Did not find node with text: {}", name))
             // Get table element <tr>
             .parent()
-            .unwrap();
+            .expect("Could not get <tr> element");
 
         let mut expecting_value = false;
         for uncle in gpar.children() {
