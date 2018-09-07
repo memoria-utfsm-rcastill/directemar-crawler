@@ -135,7 +135,10 @@ impl DavisDataDocument {
     }
 
     fn temp(&self) -> f64 {
-        let elem = self.table_element("Temperature", "\u{a0}°C");
+        let elem = self.table_element("Temperature", "\u{a0}°C").replace(
+            ",",
+            ".",
+        );
         elem.parse().expect(&format!(
             "[{}] Could not parse temp: {}",
             &self.0,
@@ -144,7 +147,10 @@ impl DavisDataDocument {
     }
 
     fn windchill(&self) -> f64 {
-        let elem = self.table_element("Windchill", "\u{a0}°C");
+        let elem = self.table_element("Windchill", "\u{a0}°C").replace(
+            ",",
+            ".",
+        );
         elem.parse().expect(&format!(
             "[{}] Could not parse windchill: {}",
             &self.0,
@@ -153,7 +159,10 @@ impl DavisDataDocument {
     }
 
     fn heat_index(&self) -> f64 {
-        let elem = self.table_element("Heat Index", "\u{a0}°C");
+        let elem = self.table_element("Heat Index", "\u{a0}°C").replace(
+            ",",
+            ".",
+        );
         elem.parse().expect(&format!(
             "[{}] Could not parse heat_index: {}",
             &self.0,
@@ -162,7 +171,7 @@ impl DavisDataDocument {
     }
 
     fn humidity(&self) -> f64 {
-        let elem = self.table_element("Humidity", "%");
+        let elem = self.table_element("Humidity", "%").replace(",", ".");
         elem.parse::<f64>().expect(&format!(
             "[{}] Could not parse 'humidity': {}",
             &self.0,
@@ -171,7 +180,10 @@ impl DavisDataDocument {
     }
 
     fn dew_point(&self) -> f64 {
-        let elem = self.table_element("Dew\u{a0}Point ", "\u{a0}°C");
+        let elem = self.table_element("Dew\u{a0}Point ", "\u{a0}°C").replace(
+            ",",
+            ".",
+        );
         elem.parse().expect(&format!(
             "[{}] Could not parse 'dew_point': {}",
             &self.0,
@@ -180,7 +192,8 @@ impl DavisDataDocument {
     }
 
     fn rainfall_lasthour(&self) -> f64 {
-        let elem = self.table_element("Rainfall\u{a0}Last Hour", "\u{a0}mm");
+        let elem = self.table_element("Rainfall\u{a0}Last Hour", "\u{a0}mm")
+            .replace(",", ".");
         elem.parse().expect(&format!(
             "[{}] Could not parse 'rainfall_lasthour': {}",
             &self.0,
@@ -189,7 +202,8 @@ impl DavisDataDocument {
     }
 
     fn rainfall_thismonth(&self) -> f64 {
-        let elem = self.table_element("Rainfall\u{a0}This\u{a0}Month", "\u{a0}mm");
+        let elem = self.table_element("Rainfall\u{a0}This\u{a0}Month", "\u{a0}mm")
+            .replace(",", ".");
         elem.parse().expect(&format!(
             "[{}] Could not parse 'rainfall_thismonth': {}",
             &self.0,
@@ -198,7 +212,8 @@ impl DavisDataDocument {
     }
 
     fn rainfall_rate(&self) -> f64 {
-        let elem = self.table_element("Rainfall\u{a0}Rate", "\u{a0}mm/hr");
+        let elem = self.table_element("Rainfall\u{a0}Rate", "\u{a0}mm/hr")
+            .replace(",", ".");
         elem.parse().expect(&format!(
             "[{}] Could not parse 'rainfall_rate': {}",
             &self.0,
@@ -207,7 +222,8 @@ impl DavisDataDocument {
     }
 
     fn rainfall_thisyear(&self) -> f64 {
-        let elem = self.table_element("Rainfall\u{a0}This\u{a0}Year", "\u{a0}mm");
+        let elem = self.table_element("Rainfall\u{a0}This\u{a0}Year", "\u{a0}mm")
+            .replace(",", ".");
         elem.parse().expect(&format!(
             "[{}] Could not parse 'rainfall_thisyear': {}",
             &self.0,
@@ -230,7 +246,8 @@ impl DavisDataDocument {
     }
 
     fn rainfall_today(&self) -> f64 {
-        let elem = self.table_element("Rainfall\u{a0}Today", "\u{a0}mm");
+        let elem = self.table_element("Rainfall\u{a0}Today", "\u{a0}mm")
+            .replace(",", ".");
         elem.parse().expect(&format!(
             "[{}] Could not parse 'rainfall_today': {}",
             &self.0,
@@ -243,7 +260,7 @@ impl DavisDataDocument {
     }
 
     fn wind_direction(&self) -> f64 {
-        let wind = self.table_element("Wind Bearing", "");
+        let wind = self.table_element("Wind Bearing", "").replace(",", ".");
         wind[..wind.find("°").expect(&format!(
             "[{}] Could not find '°' index",
             &self.0
@@ -256,7 +273,8 @@ impl DavisDataDocument {
     }
 
     fn wind_speed_gust(&self) -> f64 {
-        let elem = self.table_element("Wind\u{a0}Speed\u{a0}(gust)", "\u{a0}kts");
+        let elem = self.table_element("Wind\u{a0}Speed\u{a0}(gust)", "\u{a0}kts")
+            .replace(",", ".");
         elem.parse().expect(&format!(
             "[{}] Could not parse 'wind_speed_gust': {}",
             &self.0,
@@ -265,7 +283,8 @@ impl DavisDataDocument {
     }
 
     fn wind_speed_avg(&self) -> f64 {
-        let elem = self.table_element("Wind\u{a0}Speed\u{a0}(avg)", "\u{a0}kts");
+        let elem = self.table_element("Wind\u{a0}Speed\u{a0}(avg)", "\u{a0}kts")
+            .replace(",", ".");
         elem.parse().expect(&format!(
             "[{}] Could not parse 'wind_speed_avg': {}",
             &self.0,
@@ -274,7 +293,10 @@ impl DavisDataDocument {
     }
 
     fn barometer(&self) -> f64 {
-        let elem = self.table_element("Barometer\u{a0}", "\u{a0}hPa");
+        let elem = self.table_element("Barometer\u{a0}", "\u{a0}hPa").replace(
+            ",",
+            ".",
+        );
         elem.parse().expect(&format!(
             "[{}] Could not parse 'barometer': {}",
             &self.0,
