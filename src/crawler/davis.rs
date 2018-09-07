@@ -5,7 +5,7 @@ use self::select::document::Document;
 use self::select::node::Node;
 use self::select::predicate::Element;
 
-use self::chrono::{DateTime, Utc};
+use self::chrono::{DateTime, Utc, MIN_DATE};
 
 use bson::Document as BsonDocument;
 
@@ -237,12 +237,12 @@ impl DavisDataDocument {
             self.table_element("Last rainfall", "\u{a0}mm").as_str()
         );
         DateTime::parse_from_str(&dt_with_tz, "%Y-%m-%d %H:%M %:z")
-            .expect(&format!(
-                "[{}] Could not parse 'rainfall_last': {}",
-                &self.0,
-                dt_with_tz
-            ))
-            .with_timezone(&Utc)
+            //docs do not specify errors
+            .map(|dt| dt.with_timezone(&Utc))
+            .or_else(|_| -> Result<_, ()> {
+                Ok(MIN_DATE.and_hms(0, 0, 0))
+            })
+            .unwrap() // guaranteed to be Ok()
     }
 
     fn rainfall_today(&self) -> f64 {
